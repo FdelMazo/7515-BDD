@@ -1,0 +1,30 @@
+\documentclass[12pt]{article}
+
+\usepackage{pdfpages}
+\usepackage{tikz}
+\usetikzlibrary{er}
+
+\pagestyle{empty}
+
+
+
+\begin{document}
+\includepdf[pagecommand={
+	\begin{tikzpicture}[remember picture, overlay]
+		\node at (13,2.7) {100029};
+		\node at (13,1.8) {del Mazo};
+		\node at (13,1) {Federico};
+	\end{tikzpicture}}]{Parcialito1-Enunciado}
+
+\begin{tikzpicture}[auto,node distance=0.6\textwidth]
+  \node[entity] (producto) {Producto};
+  \node[entity] (ordendeventa) [below  of=producto] {Orden de Venta};
+  \node[entity] (cliente) [below  of=ordendeventa] {Cliente};
+
+  \node[entity] (proveedor) [right  of=producto] {Proveedor};
+  \node[entity] (envio) [below  of=proveedor] {Envío};
+  \node[entity] (factura) [below  of=envio] {Factura};
+\end{tikzpicture}
+
+
+\end{document}
