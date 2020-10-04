@@ -1,29 +1,40 @@
 \documentclass[12pt]{article}
 
-\usepackage{pdfpages}
+% https://www.guitex.org/home/images/ArsTeXnica/AT015/drawing-ER-diagrams-with-TikZ.pdf
 \usepackage{tikz-er2}
 \usetikzlibrary{er}
 
+\usepackage{pdfpages}
 \pagestyle{empty}
 
+\usepackage[a4paper, margin=1in]{geometry}
 
 
 \begin{document}
 \includepdf[pagecommand={
 	\begin{tikzpicture}[remember picture, overlay]
-		\node at (13,2.7) {100029};
-		\node at (13,1.8) {del Mazo};
-		\node at (13,1) {Federico};
+		\node at (14,-0.3) {100029};
+		\node at (14,-1.2) {del Mazo};
+		\node at (14,-2) {Federico};
 	\end{tikzpicture}}]{Parcialito1-Enunciado}
 
-\begin{tikzpicture}[auto,node distance=0.6\textwidth]
+
+\centering
+
+\vspace*{\fill}
+\begin{tikzpicture}[auto,node distance=3cm]
   \node[entity] (producto) {Producto};
+
   \node[entity] (ordendeventa) [below  of=producto] {Orden de Venta};
+
   \node[entity] (cliente) [below  of=ordendeventa] {Cliente};
 
-  \node[entity] (proveedor) [right  of=producto] {Proveedor};
+  \node[entity] (proveedor) [right  of=producto, xshift=3cm] {Proveedor};
+
   \node[entity] (envio) [below  of=proveedor] {Envío};
+
   \node[entity] (factura) [below  of=envio] {Factura};
 \end{tikzpicture}
+\vspace{\fill}
 
 \end{document}
