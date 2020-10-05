@@ -4,14 +4,19 @@
 \usepackage{tikz-er2}
 \usetikzlibrary{er, positioning}
 
+\usepackage{xcolor}
+
 \usepackage{pdfpages}
 \pagestyle{empty}
 
-\usepackage[a4paper, margin=0in]{geometry}
+\usepackage[a4paper, margin=0.2in]{geometry}
 
 \pgfdeclarelayer{bg}    % declare background layer
 \pgfsetlayers{bg,main}  % set the order of the layers (main is the standard layer)
 
+\tikzset{every entity/.style={draw=purple, fill=purple!20}}
+\tikzset{every attribute/.style={draw=pink, fill=pink!20}}
+\tikzset{every relationship/.style={draw=violet, fill=violet!20}}
 
 \begin{document}
 \includepdf[pagecommand={
@@ -44,21 +49,38 @@
   \node[attribute] (cliente_identificadortributario) [below=0.5cm of cliente_direccionfacturacion] {Identificador Tributario} edge (cliente);
   \node[attribute, align=center] (cliente_tipo_identificadortributario) [below=0.5cm of cliente_identificadortributario] {Tipo\\ Identificador Tributario} edge (cliente);
 
-  \node[entity] (proveedor) [right=of producto, xshift=3cm] {Proveedor};
+  \node[entity] (proveedor) [right=of producto, xshift=3.5cm] {Proveedor};
   \node[attribute] (proveedor_cuit) [right=of proveedor] {\key{CUIT}} edge (proveedor);
   \node[attribute] (proveedor_razon_social) [above=0.5cm of proveedor_cuit] {Razón Social} edge (proveedor);
   \node[attribute] (proveedor_direccion) [below=0.5cm of proveedor_cuit] {Dirección} edge (proveedor);
 
-  \node[entity] (envio) [below=of proveedor] {Envío};
+  \node[weak entity] (envio) [below=of proveedor] {Envío\footnote[2]{}};
   \node[attribute] (envio_fecha) [right=of envio] {Fecha} edge (envio);
 
   \node[entity] (factura) [below=of envio] {Factura};
   \node[attribute] (factura_numero) [right=of factura] {\key{Número}} edge (factura);
   \node[attribute] (factura_precio) [above=0.5cm of factura_numero] {Precio Total} edge (factura);
-  \node[attribute] (factura_tipo) [below=0.5cm of factura_numero] {Tipo} edge (factura);
-  \node[attribute] (factura_sucursal) [below=0.5cm of factura_tipo] {Sucursal} edge (factura);
+  \node[attribute] (factura_tipo) [below=0.5cm of factura_numero] {\key{Tipo}} edge (factura);
+  \node[attribute] (factura_sucursal) [below=0.5cm of factura_tipo] {\key{Sucursal}} edge (factura) ;
+
+  \node[relationship] (producto_comprado_proveedor) [right=of producto] {Comprado a} edge [label=above left:{(1,N)}](producto) edge [label=above right:{(0,N)}] (proveedor);
+  \node[attribute, align=center] (nombre_proveedor) [above=0.5cm of producto_comprado_proveedor] {Nombre\\ según proveedor} edge (producto_comprado_proveedor);
+
+  \node[relationship, align=center] (producto_sintetizado) [above left=1.5cm of producto] {Sintetizado\\en base a\footnote[1]{}} edge (producto);
+
+  \node[relationship] (envio_asociado_factura) [below=1.5cm of envio] {Asociado a} edge [label=above right:{(1,N)}] (envio) edge [label=below right:{1}] (factura);
+
+  \node[ident relationship] (ordendeventa_asociada_envio) [right=of ordendeventa] {Asociada a} edge [label=above left:{1}] (envio) edge [label=above right:{(1,N)}] (ordendeventa);
+
+  \node[relationship] (producto_compone_ordendeventa) [below=1.5cm of producto] {Compone} edge [label=above right:{(1,N)}] (producto) edge [label=below right:{(0,N)}] (ordendeventa);
+  \node[attribute] (producto_cantidad) [left=of producto_compone_ordendeventa] {Cantidad} edge (producto_compone_ordendeventa);
+
+  \node[relationship] (ordendeventa_efectua_cliente) [below=1.5cm of ordendeventa] {Se le efectua a} edge [label=above right:{(0,N)}] (cliente) edge [label=below right:{1}]  (ordendeventa);
 
 \end{tikzpicture}
+
 \vspace{\fill}
 
+\footnotetext[1]{No estoy seguro de la cardinalidad de esta interrelación, va para los dos lados}
+\footnotetext[2]{¿Esta entidad debería tener un identificador generado?\\Asumo que puede haber varios envíos por día por lo que fecha no puede ser}
 \end{document}
