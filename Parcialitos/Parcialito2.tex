@@ -1,0 +1,43 @@
+\documentclass[10pt]{article}
+
+\usepackage[a4paper, left=1in, bottom=1in]{geometry}
+\thispagestyle{empty}
+\usepackage{pdfoverlay}
+\usepackage[normalem]{ulem}
+\pdfoverlaySetPDF{Parcialito2-Enunciado.pdf}
+
+\begin{document}
+
+\begin{picture}(0,0)
+	\put(410,12){100029}
+	\put(405,-12){del Mazo}
+	\put(406,-35){Federico}
+\end{picture}
+
+\vspace{35em}
+Entidades pasadas a relaciones:
+
+\begin{itemize}
+	\item A(\underline{id\_A}, a1)
+	\item B(\underline{id\_B}, b1)
+	\item C(\underline{id\_C}, c1)
+	\item D(\underline{id\_D}, d1)
+	\item E(\underline{\dashuline{id\_C}}, e1, e2)
+	\item F(\underline{\dashuline{id\_C}}, f1, f2)
+\end{itemize}
+
+Interrelaciones pasadas a relaciones:
+
+\begin{itemize}
+	\item R1(\underline{\dashuline{id\_C, id\_C}})
+	\item R2(\underline{\dashuline{id\_D, id\_C}}, r1)
+	\item R3(\dashuline{id\_A, id\_B, id\_D})
+	\begin{itemize}
+		\item En esta relación, los 3 pares son una clave candidata: \\ \{ \{ id\_A, id\_B\}, \{ id\_B, id\_D\}, \{ id\_A, id\_D\} \}
+		\item Hay que tomar uno de estos 3 pares como clave primaria, es indistinto cual tomemos (al menos es indistinto en este modelo abstracto, tal vez en un dominio especializado encontremos una lógica detrás de la elección)
+	\end{itemize}
+\end{itemize}
+
+Claves primarias \underline{subrayadas}, claves foráneas \dashuline{subrayadas a rayas}, claves candidatas (adicionales a la clave primaria) especificadas
+
+\end{document}
