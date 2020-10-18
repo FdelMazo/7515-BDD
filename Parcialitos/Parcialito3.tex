@@ -1,0 +1,71 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper, left=1in, bottom=1in]{geometry}
+\thispagestyle{empty}
+\usepackage{pdfpages}
+\usepackage{tikz}
+\usepackage{fontspec}
+\usepackage[english, greek]{babel}
+\usepackage[utf8]{inputenc}
+\setmainfont{Linux Libertine O}
+
+\begin{document}
+
+\includepdf[pagecommand={
+	\begin{tikzpicture}[remember picture, overlay]
+		\node at (2,-4.1) {del Mazo, Federico};
+		\node at (8,-4.1) {100029};
+		\node at (13,-4.1) {18/10/2020};
+	\end{tikzpicture}}]{Parcialito3-Enunciado}
+
+\selectlanguage{english}
+\begin{itemize}
+	\item A
+	\begin{verbatim}
+	peliculas_siglo_pasado = ρ movie_id ← id (σ movies.year < 2000 movies)
+	id_spielberg = ρ director_id ← id (σ directors.first_name = 'Steven' ∧ directors.last_name = 'Spielberg' directors)
+	peliculas_spielberg = id_spielberg ⨝ movies_directors
+
+	peliculas_siglo_pasado ⨝ peliculas_spielberg
+	\end{verbatim}
+	\item B
+	\begin{verbatim}
+	life_of_brian = ρ movie_id ← id (σ movies.name = 'Life of Brian' movies)
+	actores_life_of_brian = π roles.actor_id (roles ⨝ life_of_brian)
+	actores_life_of_brian_peliculas = ρ id ← roles.movie_id (π roles.movie_id (actores_life_of_brian ⨝ roles))
+
+	π movies.name (actores_life_of_brian_peliculas ⨝ movies)
+	\end{verbatim}
+	\item C
+	\begin{verbatim}
+	id_birgman = ρ director_id ← id (σ directors.first_name = 'Ingmar' ∧ directors.last_name = 'Bergman' directors)
+	peliculas_bergman = ρ movie_id ← id (π movies.id (movies ⨝ id_birgman))
+	actores_bergman = ρ id ← actor_id (π roles.actor_id (roles ⨝ peliculas_bergman))
+
+	actors ⨝ actores_bergman	\end{verbatim}
+	\item D
+	\begin{verbatim}
+	war_movies = ρ id ← movies_genres.movie_id (π movies_genres.movie_id (σ movies_genres.genre = 'War' movies_genres)) ⨝ movies
+
+	war_years_1 = π year_1 (ρ year_1 ← movies.year (war_movies))
+	war_years_2 = π year (war_movies)
+	war_young_years = π year_1 (σ year_1 > year (war_years_1 ⨯ war_years_2))
+
+	war_oldest_year = war_years_2 - war_young_years
+
+	war_oldest_movies = ρ movie_id ← id (war_movies ⨝ war_oldest_year)
+	war_oldest_movies_actors = actors ⨝ (ρ id ← roles.actor_id (π roles.actor_id, movies.name (roles ⨝ war_oldest_movies)))
+
+	π actors.first_name, actors.last_name, movies.name (war_oldest_movies_actors)
+	\end{verbatim}
+	\item E
+	\begin{verbatim}
+	genres_0 = π movie_id, genre (movies_genres)
+	genres_1 = ρ genre_1←genre ( π movie_id, genre (movies_genres))
+	genres_2 = ρ genre_2←genre ( π movie_id, genre (movies_genres))
+
+	π movie_id (σ genre != genre_1 ∧ genre != genre_2 ∧ genre_1 != genre_2  (genres_0 ⨝ genres_1 ⨝ genres_2))
+	\end{verbatim}
+
+\end{itemize}
+\end{document}
