@@ -4,10 +4,8 @@
 \thispagestyle{empty}
 \usepackage{pdfpages}
 \usepackage{tikz}
-\usepackage{fontspec}
-\usepackage[english, greek]{babel}
-\usepackage[utf8]{inputenc}
-\setmainfont{Linux Libertine O}
+\usepackage{listings}
+\usepackage{minted}
 
 \begin{document}
 
@@ -18,54 +16,71 @@
 		\node at (13,-4.1) {18/10/2020};
 	\end{tikzpicture}}]{Parcialito3-Enunciado}
 
-\selectlanguage{english}
-\begin{itemize}
-	\item A
-	\begin{verbatim}
-	peliculas_siglo_pasado = ρ movie_id ← id (σ movies.year < 2000 movies)
-	id_spielberg = ρ director_id ← id (σ directors.first_name = 'Steven' ∧ directors.last_name = 'Spielberg' directors)
-	peliculas_spielberg = id_spielberg ⨝ movies_directors
+\begin{minted}[mathescape=true,escapeinside=||,breaklines,frame=single]{text}
+peliculas_siglo_pasado = |$\rho$| movie_id |$\leftarrow$| id (|$\sigma$| movies.year < 2000 movies)
+id_spielberg = |$\rho$| director_id |$\leftarrow$| id (|$\sigma$| directors.first_name = 'Steven' |$\land$|  directors.last_name = 'Spielberg' directors)
+peliculas_spielberg = id_spielberg |$\bowtie$| movies_directors
 
-	peliculas_siglo_pasado ⨝ peliculas_spielberg
-	\end{verbatim}
-	\item B
-	\begin{verbatim}
-	life_of_brian = ρ movie_id ← id (σ movies.name = 'Life of Brian' movies)
-	actores_life_of_brian = π roles.actor_id (roles ⨝ life_of_brian)
-	actores_life_of_brian_peliculas = ρ id ← roles.movie_id (π roles.movie_id (actores_life_of_brian ⨝ roles))
+peliculas_siglo_pasado |$\bowtie$| peliculas_spielberg
+\end{minted}
 
-	π movies.name (actores_life_of_brian_peliculas ⨝ movies)
-	\end{verbatim}
-	\item C
-	\begin{verbatim}
-	id_birgman = ρ director_id ← id (σ directors.first_name = 'Ingmar' ∧ directors.last_name = 'Bergman' directors)
-	peliculas_bergman = ρ movie_id ← id (π movies.id (movies ⨝ id_birgman))
-	actores_bergman = ρ id ← actor_id (π roles.actor_id (roles ⨝ peliculas_bergman))
+\begin{figure}[H]
+\includegraphics[width=0.7\textwidth]{Parcialito3/result1}
+\end{figure}
 
-	actors ⨝ actores_bergman	\end{verbatim}
-	\item D
-	\begin{verbatim}
-	war_movies = ρ id ← movies_genres.movie_id (π movies_genres.movie_id (σ movies_genres.genre = 'War' movies_genres)) ⨝ movies
+\begin{minted}[mathescape=true,escapeinside=||,breaklines,frame=single]{text}
+life_of_brian = |$\rho$| movie_id |$\leftarrow$| id (|$\sigma$| movies.name = 'Life of Brian' movies)
+actores_life_of_brian = |$\pi$| roles.actor_id (roles |$\bowtie$| life_of_brian)
+actores_life_of_brian_peliculas = |$\rho$| id |$\leftarrow$| roles.movie_id (|$\pi$| roles.movie_id (actores_life_of_brian |$\bowtie$| roles))
 
-	war_years_1 = π year_1 (ρ year_1 ← movies.year (war_movies))
-	war_years_2 = π year (war_movies)
-	war_young_years = π year_1 (σ year_1 > year (war_years_1 ⨯ war_years_2))
+|$\pi$| movies.name (actores_life_of_brian_peliculas |$\bowtie$| movies)
+\end{minted}
 
-	war_oldest_year = war_years_2 - war_young_years
+\begin{figure}[H]
+\includegraphics[width=0.7\textwidth]{Parcialito3/result2}
+\end{figure}
 
-	war_oldest_movies = ρ movie_id ← id (war_movies ⨝ war_oldest_year)
-	war_oldest_movies_actors = actors ⨝ (ρ id ← roles.actor_id (π roles.actor_id, movies.name (roles ⨝ war_oldest_movies)))
+\begin{minted}[mathescape=true,escapeinside=||,breaklines,frame=single]{text}
+id_birgman = |$\rho$| director_id |$\leftarrow$| id (|$\sigma$| directors.first_name = 'Ingmar' |$\land$|  directors.last_name = 'Bergman' directors)
+peliculas_bergman = |$\rho$| movie_id |$\leftarrow$| id (|$\pi$| movies.id (movies |$\bowtie$| id_birgman))
+actores_bergman = |$\rho$| id |$\leftarrow$| actor_id (|$\pi$| roles.actor_id (roles |$\bowtie$| peliculas_bergman))
 
-	π actors.first_name, actors.last_name, movies.name (war_oldest_movies_actors)
-	\end{verbatim}
-	\item E
-	\begin{verbatim}
-	genres_0 = π movie_id, genre (movies_genres)
-	genres_1 = ρ genre_1←genre ( π movie_id, genre (movies_genres))
-	genres_2 = ρ genre_2←genre ( π movie_id, genre (movies_genres))
+actors |$\bowtie$| actores_bergman
+\end{minted}
 
-	π movie_id (σ genre != genre_1 ∧ genre != genre_2 ∧ genre_1 != genre_2  (genres_0 ⨝ genres_1 ⨝ genres_2))
-	\end{verbatim}
+\begin{figure}[H]
+\includegraphics[width=0.7\textwidth]{Parcialito3/result3}
+\end{figure}
 
-\end{itemize}
+\begin{minted}[mathescape=true,escapeinside=||,breaklines,frame=single]{text}
+war_movies = |$\rho$| id |$\leftarrow$| movies_genres.movie_id (|$\pi$| movies_genres.movie_id (|$\sigma$| movies_genres.genre = 'War' movies_genres)) |$\bowtie$| movies
+
+war_years_1 = |$\pi$| year_1 (|$\rho$| year_1 |$\leftarrow$| movies.year (war_movies))
+war_years_2 = |$\pi$| year (war_movies)
+war_young_years = |$\pi$| year_1 (|$\sigma$| year_1 > year (war_years_1 ⨯ war_years_2))
+
+war_oldest_year = war_years_2 - war_young_years
+
+war_oldest_movies = |$\rho$| movie_id |$\leftarrow$| id (war_movies |$\bowtie$| war_oldest_year)
+war_oldest_movies_actors = actors |$\bowtie$| (|$\rho$| id |$\leftarrow$| roles.actor_id (|$\pi$| roles.actor_id, movies.name (roles |$\bowtie$| war_oldest_movies)))
+
+|$\pi$| actors.first_name, actors.last_name, movies.name (war_oldest_movies_actors)
+\end{minted}
+
+\begin{figure}[H]
+\includegraphics[width=0.7\textwidth]{Parcialito3/result4}
+\end{figure}
+
+\begin{minted}[mathescape=true,escapeinside=||,breaklines,frame=single]{text}
+genres_0 = |$\pi$| movie_id, genre (movies_genres)
+genres_1 = |$\rho$| genre_1|$\leftarrow$|genre ( |$\pi$| movie_id, genre (movies_genres))
+genres_2 = |$\rho$| genre_2|$\leftarrow$|genre ( |$\pi$| movie_id, genre (movies_genres))
+
+|$\pi$| movie_id (|$\sigma$| genre != genre_1 |$\land$|  genre != genre_2 |$\land$|  genre_1 != genre_2  (genres_0 |$\bowtie$| genres_1 |$\bowtie$| genres_2))
+\end{minted}
+
+\begin{figure}[H]
+\includegraphics[width=0.7\textwidth]{Parcialito3/result5}
+\end{figure}
+
 \end{document}
